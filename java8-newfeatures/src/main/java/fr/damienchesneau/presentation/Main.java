@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Date;
 import java.util.function.Supplier;
 
 /**
@@ -35,5 +36,8 @@ public class Main {
         InnerCalc a = new InnerCalc();
         boolean test = a.getValue(scSupplier, "UTF-8");
         System.out.println(test);
+        
+        Person p1 = new Person.Builder("Damien", "Chesneau").setEmail("contact@damienchesneau.fr").build();
+        System.out.println(p1);
     }
 }
