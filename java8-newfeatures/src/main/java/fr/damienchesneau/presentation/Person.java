@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Builder pattern
  *
- * @author Damien Chesneau - contact@damienchesneau.fr 
+ * @author Damien Chesneau - contact@damienchesneau.fr
  */
 public class Person {
 
@@ -24,19 +24,19 @@ public class Person {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Person){
+        if (obj instanceof Person) {
             Person p = (Person) obj;
-            return p.firstName.equals(this.firstName) && 
-                     p.lastName.equals(this.lastName) &&
-                     p.years.equals(this.years) &&
-                     p.email.equals(this.firstName);
+            return p.firstName.equals(this.firstName)
+                    && p.lastName.equals(this.lastName)
+                    && p.years.equals(this.years)
+                    && p.email.equals(this.firstName);
         }
         return false;
     }
 
     @Override
     public String toString() {
-        return firstName +" " +lastName+((years==null)?"":" "+years.toString())+((email==null)?"":" "+email);
+        return firstName + " " + lastName + ((years == null) ? "" : " " + years.toString()) + ((email == null) ? "" : " " + email);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Person {
         hash = 97 * hash + Objects.hashCode(this.email);
         return hash;
     }
-    
+
     public static class Builder {
 
         private final String firstName;

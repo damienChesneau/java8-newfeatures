@@ -8,13 +8,12 @@ package fr.damienchesneau.presentation;
 public interface Logger {
 
     /**
-     * This functional interface created for inject our logger dependancies inner 
-     * my own code. 
+     * This functional interface created for inject our logger dependancies
+     * inner my own code.
+     *
      * @param message use to devlivre a simple message of my code.
      * @param level used for caracterize type of log. <br>
-     * 1 - error
-     * 2 - simple log 
-     * 3 - warning
+     * 1 - error 2 - simple log 3 - warning
      */
     public void log(String message, int level);
 }

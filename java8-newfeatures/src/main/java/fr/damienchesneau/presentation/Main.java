@@ -58,7 +58,7 @@ public class Main {
         list.add("sdsd");
         list.add("etsscqcqsdt");
         list.add("etst");
-        
+
         System.out.println("Contains = " + list.contains("etst"));
         int vaa = Arrays.binarySearch(val, "coucou");
         System.out.println(vaa >= 0);
@@ -70,5 +70,5 @@ public class Main {
             return !(i > 3000);
         });
         System.out.println(toPrint);
-    }    
+    }
 }
