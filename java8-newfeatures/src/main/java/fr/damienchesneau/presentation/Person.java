@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Builder pattern
  *
- * @author Damien Chesneau <contact@damienchesneau.fr>
+ * @author Damien Chesneau - contact@damienchesneau.fr 
  */
 public class Person {
 

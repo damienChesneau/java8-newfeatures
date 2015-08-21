@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Damien Chesneau <contact@damienchesneau.fr>
+ * @author Damien Chesneau - contact@damienchesneau.fr
  */
 public class Main {
 
