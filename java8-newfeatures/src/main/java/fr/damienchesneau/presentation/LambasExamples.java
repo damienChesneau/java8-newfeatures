@@ -1,11 +1,9 @@
 package fr.damienchesneau.presentation;
 
-import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 /**
- *
  * @author Damien Chesneau - contact@damienchesneau.fr
  */
 public class LambasExamples {
@@ -18,17 +16,26 @@ public class LambasExamples {
     public String standardFunction(Function<Integer, Boolean> function) {
         int parameter = Integer.MIN_VALUE;//Somes complex calculs.
         boolean retLambda = function.apply(parameter);
-        return (retLambda) ? "I'm verry happy to se that." : "Bad week...";
+        return (retLambda) ? "Hello" : "Oops";
     }
 
-    public int max(int val1, int val2, Logger log) {
-        Objects.requireNonNull(log, "Please use correct logger.");
-        if (val1 > val2) {
-            log.log("Val2 is the max.", 2);
-            return val2;
-        } else {
-            log.log("Val1 is the max.", 2);
-            return val1;
-        }
+    public void max(int val1, int val2, Logger log) {
+        Function<Integer, String> validatClass = new Function<Integer, String>() {
+            @Override
+            public String apply(Integer val) {
+                return (val > 25) ? "OK" : "NOK";
+            }
+        };
+
+        Function<Integer, String> validateLambda = (val) -> {
+            return (val > 25) ? "OK" : "NOK";
+        };
+
+        Function<Integer, String> lambGen = LambasExamples::lambda$1;
     }
+
+    public static String lambda$1(Integer val) {
+        return (val > 25) ? "OK" : "NOK";
+    }
+
 }
