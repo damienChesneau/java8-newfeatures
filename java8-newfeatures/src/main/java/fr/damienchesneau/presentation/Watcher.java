@@ -12,9 +12,9 @@ import java.util.function.Consumer;
 public class Watcher {
     private final Path directory;
     private boolean showHideFiles;
-    private volatile Consumer<String> runNew;
-    private volatile Consumer<String> runUpdate;
-    private volatile Consumer<String> runDelete;
+    private Consumer<String> runNew;
+    private Consumer<String> runUpdate;
+    private Consumer<String> runDelete;
     private final Object locker = new Object();
 
     public Watcher(Path directory) {
