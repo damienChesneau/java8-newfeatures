@@ -2,20 +2,23 @@ package fr.damienchesneau.presentation;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
+import static java.nio.file.StandardWatchEventKinds.*;
+
 /**
+ * API to watch a repository with lambdas.
+ *
  * @author Damien Chesneau - contact@damienchesneau.fr
  */
 public class Watcher {
     private final Path directory;
-    private boolean showHideFiles;
-    private Consumer<String> runNew;
-    private Consumer<String> runUpdate;
-    private Consumer<String> runDelete;
-    private final Object locker = new Object();
+    private final boolean showHideFiles;
+    private final HashMap<String, Consumer<String>> calls = new HashMap<>();
+    private final ReentrantLock locker = new ReentrantLock();
 
     public Watcher(Path directory) {
         this(directory, true);
@@ -33,57 +36,54 @@ public class Watcher {
     private WatchKey initializer() throws IOException, InterruptedException {
         WatchService watcher = directory.getFileSystem().newWatchService();
         directory.register(watcher,
-                StandardWatchEventKinds.ENTRY_CREATE,
-                StandardWatchEventKinds.ENTRY_DELETE,
-                StandardWatchEventKinds.ENTRY_MODIFY);
+                ENTRY_CREATE,
+                ENTRY_DELETE,
+                ENTRY_MODIFY);
         return watcher.take();
     }
 
     public void setOnDelete(Consumer<String> runDelete) {
-        synchronized (locker) {
-            this.runDelete = Objects.requireNonNull(runDelete);
-        }
+        Objects.requireNonNull(runDelete);
+        locker.lock();
+        calls.put(ENTRY_DELETE.name(), runDelete);
+        locker.unlock();
     }
 
     public void setOnNew(Consumer<String> runNew) {
-        synchronized (locker) {
-            this.runNew = Objects.requireNonNull(runNew);
-        }
+        Objects.requireNonNull(runNew);
+        locker.lock();
+        calls.put(ENTRY_CREATE.name(), runNew);
+        locker.unlock();
     }
 
     public void setOnUpdate(Consumer<String> runUpdate) {
-        synchronized (locker) {
-            this.runUpdate = Objects.requireNonNull(runUpdate);
-        }
+        Objects.requireNonNull(runUpdate);
+        locker.lock();
+        calls.put(ENTRY_MODIFY.name(), runUpdate);
+        locker.unlock();
     }
 
     public void start() throws IOException, InterruptedException {
-        WatchKey watckKey = initializer();
         while (!Thread.interrupted()) {
-            List<WatchEvent<?>> events = watckKey.pollEvents();
-            for (WatchEvent event : events) {
+            for (WatchEvent event : initializer().pollEvents()) {
                 if (!Files.isHidden(Paths.get(event.context().toString()))) {
-                    synchronized (locker) {
-                        switch (event.kind().toString()) {
-                            case "ENTRY_CREATE":
-                                this.runNew.accept(event.context().toString());
-                                break;
-                            case "ENTRY_DELETE":
-                                this.runDelete.accept(event.context().toString());
-                                break;
-                            case "ENTRY_MODIFY":
-                                this.runUpdate.accept(event.context().toString());
-                                break;
-                        }
-                    }
+                    locker.lock();
+                    action(event);
+                    locker.unlock();
                 }
             }
         }
     }
 
+    private void action(WatchEvent event) {
+        Consumer<String> consumer = calls.getOrDefault(event.kind().toString(), (cs) -> {
+        });
+        consumer.accept(event.context().toString());
+    }
+
     public static void main(String[] args) {
         try {
-            Watcher w = new Watcher(Paths.get("/home/damien/"), true);
+            Watcher w = new Watcher(Paths.get("/home/damien/"), false);
             w.setOnDelete(System.out::println);
             w.setOnNew(System.out::println);
             w.setOnUpdate(System.out::println);
